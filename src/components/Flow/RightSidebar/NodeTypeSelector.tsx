@@ -4,7 +4,7 @@ import { ToolTypeData, type ToolType } from "../../../types/toolType";
 import type { FlowNode, NodeType, OutputType } from "../../../types/types";
 import { useReactFlow } from "@xyflow/react";
 import { useDispatch } from "react-redux";
-import { updateNodeData } from "../Nodes/flowNode";
+import { useUpdateNodeData } from "../../../hooks/useUpdateNodeData";
 
 interface NodeTypeSelectorProps {
   currentNode: FlowNode | null;
@@ -13,6 +13,8 @@ interface NodeTypeSelectorProps {
 export const NodeTypeSelector: React.FC<NodeTypeSelectorProps> = ({ currentNode }) => {
   const dispatch = useDispatch();
   const rf = useReactFlow();
+  const updateNodeData = useUpdateNodeData();
+
 
   // 👇 Step navigation: either picking node type or picking tool
   const [selectedNodeType, setSelectedNodeType] = useState<NodeType | null>(null);
@@ -106,10 +108,9 @@ export const NodeTypeSelector: React.FC<NodeTypeSelectorProps> = ({ currentNode 
     const freshNode = rf.getNode(currentNode.id) as FlowNode | undefined;
     if (!freshNode) return;
 
-    updateNodeData(dispatch, freshNode, {
-      nodeType: selectedNodeType,
-      tool: toolKey,
-      outputs: {}, // reset outputs when tool changes
+    updateNodeData(currentNode.id, {
+      nodeType: selectedNodeType, 
+      toolType: toolKey,
     });
 
     setSelectedNodeType(null); // reset view
@@ -141,7 +142,7 @@ export const NodeTypeSelector: React.FC<NodeTypeSelectorProps> = ({ currentNode 
               className="flex flex-col items-start text-left p-2 border border-gray-600 hover:bg-gray-700 rounded-md transition"
             >
               <div className="flex items-center gap-2 mb-1">
-                <div className="p-1 bg-gray-800 rounded-md">{toolMeta.icon}</div>
+                <div className="p-1 bg-gray-800 rounded-md"><toolMeta.icon size={18} className="text-gray-200" /></div>
                 <span className="text-sm font-medium text-gray-100">{toolKey}</span>
               </div>
               <p className="text-xs text-gray-400">{toolMeta.description}</p>

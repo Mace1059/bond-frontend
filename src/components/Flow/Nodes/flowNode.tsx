@@ -5,6 +5,7 @@ import { NodeTypeNodeData } from '../../../types/nodeType';
 import { Info } from 'lucide-react';
 import type { AppDispatch } from '../../../store/store';
 import { updateNode } from '../../../store/nodesSlice';
+import { ToolTypeData } from '../../../types/toolType';
 
 export function updateNodeData(
   dispatch: AppDispatch,
@@ -75,7 +76,8 @@ export default function FlowNodeComponent({
     updateNodeInternals(id);
   }, [id, data.outputs, updateNodeInternals]);
   const outputKeys = Object.keys(data.outputs || {});
-
+  const outputSize = outputKeys.length;
+  
   return (
     <div
       ref={nodeRef}
@@ -105,9 +107,19 @@ export default function FlowNodeComponent({
           <span className="text-lg"><Info size={20}/></span>
         </button>
       </div>
-      <div className="p-3">
-        <p className="text-xs text-gray-400 mb-2">ID: {id}</p>
+      <div className="p-3 flex justify-between">
+          {data.toolType && (() => {
+            const tool = ToolTypeData[data.nodeType]?.[data.toolType];
+            if (!tool) return null;
 
+            const Icon = tool.icon; // ✅ because we now store the icon component itself
+            return (
+              <div className="flex items-center gap-2 flex-col">
+                <Icon size={40} className="text-gray-200" />
+                <span className="text-sm text-gray-300 truncate">{data.toolType}</span>
+              </div>
+            );
+          })()}
       </div>
 
       <Handle
@@ -126,7 +138,7 @@ export default function FlowNodeComponent({
           id={key}
           style={{
             background: "white",
-            top: `${40 + index * 25}px`, // 🔥 staggered vertically
+            top: `${40 + index * 25}px`
           }}
           isConnectable={true}
         />
