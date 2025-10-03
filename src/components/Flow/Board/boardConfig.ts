@@ -33,7 +33,7 @@ export const fitViewOptions: FitViewOptions = {
 
 // Describes how edges are shaped/tipped/colored
 export const defaultEdgeOptions: DefaultEdgeOptions = {
-  type: 'smoothstep',
+  type: 'default',
 
   markerEnd: {
     width: 20,

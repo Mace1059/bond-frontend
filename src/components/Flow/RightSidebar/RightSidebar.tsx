@@ -6,7 +6,9 @@ import { JsonFieldSelector } from "./JSON_selector";
 import { useReactFlow } from "@xyflow/react";
 import type { FlowNode, FlowNodeData } from "../../../types/types";
 import { useNodeInputs } from "../../../hooks/getNodeInputs";
-import { NodeTypeSelector } from "./NodeTypeSelector";
+import NodeDetail from "./NodeDetail";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../../store/store";
 
 type RightSidebarProps = {
   open: boolean;
@@ -75,11 +77,10 @@ export default function RightSidebar({
     document.addEventListener("mouseup", onUp);
   };
 
-  const selectedNode = useMemo(() => {
-    if (!nodeId) return null;
-    return reactFlow.getNode(nodeId);
-  }, [nodeId, reactFlow]);
-
+  const selectedNode = useSelector((state: RootState) =>
+    nodeId ? state.nodes.byId[nodeId] : null
+  );
+  
   return (
     <aside
       onTransitionEnd={onTransitionEnd}
@@ -126,14 +127,7 @@ export default function RightSidebar({
         ))}
 
         {selected === "Node Details" &&
-        <>
-          <p className="text-sm text-gray-600 mb-2">Focused node:</p>
-          <p className="font-mono bg-gray-800 rounded p-2 break-all">{nodeId}</p>
-          <NodeTypeSelector
-            currentNode={selectedNode as FlowNode}
-            onSelect={(newType) => {console.log("Selected new node type:", newType);}}
-          />
-        </>        
+           <NodeDetail selectedNode={selectedNode as FlowNode | null} />
         }
         
         {selected === "Outputs" &&

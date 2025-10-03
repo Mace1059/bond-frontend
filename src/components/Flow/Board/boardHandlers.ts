@@ -1,7 +1,7 @@
 // src/features/board/boardHandlers.ts
-import { type ReactFlowInstance, applyNodeChanges, applyEdgeChanges, type Node, type Edge, type OnNodesChange, type OnEdgesChange, type OnConnect, type OnConnectEnd, type OnNodeDrag } from '@xyflow/react';
+import { type ReactFlowInstance, applyNodeChanges, applyEdgeChanges, type Node, type Edge, type OnNodesChange, type OnEdgesChange, type OnConnect, type OnConnectEnd, type OnNodeDrag, type NodeChange } from '@xyflow/react';
 import { type AppDispatch } from '../../../store/store';
-import { setNodes, addNode } from '../../../store/nodesSlice';
+import { setNodes, addNode, updateNode } from '../../../store/nodesSlice';
 import { setEdges, addEdge } from '../../../store/edgesSlice';
 import { getId } from './boardConfig';
 
@@ -10,6 +10,7 @@ import { useReactFlow } from '@xyflow/react';
 
 import { zoomToNode } from './viewUtils';
 import { NODE_TYPES, OUTPUT_TYPES } from '../../../types/types';
+import { TOOL_TYPE } from '../../../types/toolType';
 
 //===========================
 // Viewport Resize Handler
@@ -104,11 +105,33 @@ export const onNodeDrag: OnNodeDrag = (_, node) => node;
 // ===========================
 // Nodes Change Handler ✅
 // ===========================
-export function createOnNodesChange(dispatch: AppDispatch, getNodes: () => Node[], debouncedSave: () => void): OnNodesChange {
-  return (changes) => {
-    // ✅ Always use the latest nodes via getNodes()
+function hasNodeId(change: NodeChange): change is NodeChange & { id: string } {
+  return "id" in change;
+}
+
+export function createOnNodesChange(
+  dispatch: AppDispatch,
+  getNodes: () => Node[],
+  debouncedSave: () => void
+): OnNodesChange {
+  return (changes: NodeChange[]) => {
+    if (changes.length === 0) return;
+
     const currentNodes = getNodes();
     const updatedNodes = applyNodeChanges(changes, currentNodes);
+
+    // Handle single change with ID (e.g. drag, selection)
+    if (changes.length === 1 && hasNodeId(changes[0])) {
+      const changedId = changes[0].id;
+      const updatedNode = updatedNodes.find((n) => n.id === changedId);
+      if (updatedNode) {
+        dispatch(updateNode(updatedNode));
+        debouncedSave();
+        return;
+      }
+    }
+
+    // Fallback: batch update
     dispatch(setNodes(updatedNodes));
     debouncedSave();
   };
@@ -135,7 +158,10 @@ export function createOnConnect(dispatch: AppDispatch, debouncedSave: () => void
       id: getId(),
       source: connection.source!,
       target: connection.target!,
+      sourceHandle: connection.sourceHandle ?? undefined, 
+      targetHandle: connection.targetHandle ?? undefined,
     };
+
     dispatch(addEdge(newEdge));
     debouncedSave();
   };
@@ -151,28 +177,19 @@ export function createOnConnectEnd(
 ): OnConnectEnd {
   return (event, connectionState) => {
     if (!connectionState.isValid) {
-      const id = getId();
-      const { clientX, clientY } = 'changedTouches' in event ? event.changedTouches[0] : event;
+      const { clientX, clientY } =
+        'changedTouches' in event ? event.changedTouches[0] : event;
 
-      const newNode: Node = {
-        id,
-        position: screenToFlowPosition({ x: clientX, y: clientY }),
-        data: { text: '' },
-        type: 'blank',
-        origin: [0, 0],
-      };
+      const position = screenToFlowPosition({ x: clientX, y: clientY });
 
-      // ✅ Add the node first so React Flow initializes it before edges
-      dispatch(addNode(newNode));
-
-      if (connectionState.fromNode) {
-        const newEdge: Edge = {
-          id: getId(),
-          source: connectionState.fromNode.id,
-          target: id,
-        };
-        dispatch(addEdge(newEdge));
-      }
+      handleAddNode(
+        dispatch,
+        position,
+        'flowNode',
+        undefined,                                 // uses default node data
+        connectionState.fromNode?.id,             // 👈 auto-connect here
+        connectionState.fromHandle?.id ?? undefined
+      );
 
       debouncedSave();
     }
@@ -187,20 +204,37 @@ export function handleAddNode(
   position: { x: number; y: number },
   type: string = 'flowNode',
   data: Record<string, any> = {
-      label: 'New Node',
-      nodeType: NODE_TYPES.blank,
-      outputType: OUTPUT_TYPES.json,
-      inputs: {},
-      outputs: {test: 'data'},
-    },
-) {
+    label: 'New Node',
+    nodeType: NODE_TYPES.blank,
+    outputType: null,
+    toolType: null,
+    inputs: {},
+    outputs: {},
+  },
+  sourceId?: string,        // 👈 NEW: optional source node ID
+  sourceHandleId?: string   // 👈 NEW: optional source handle ID
+): string {
+  const id = getId();
+
   const newNode: Node = {
-    id: getId(),
-    type: type,
-    position: position,
-    data: data
+    id,
+    type,
+    position,
+    data,
   };
 
-  // ✅ Add node cleanly
   dispatch(addNode(newNode));
+
+  // 👇 Automatically connect if sourceId is provided
+  if (sourceId) {
+    const newEdge: Edge = {
+      id: getId(),
+      source: sourceId,
+      sourceHandle: sourceHandleId,
+      target: id,
+    };
+    dispatch(addEdge(newEdge));
+  }
+
+  return id;
 }

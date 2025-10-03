@@ -1,5 +1,6 @@
 // types.ts
 import type { Node } from '@xyflow/react';
+import type { ToolType } from './toolType';
 
 export const OUTPUT_TYPES = {
   json: 'json',
@@ -37,6 +38,7 @@ export interface FlowNodeData extends Record<string, unknown> {
   label: string;                 // e.g. "Processing Node"
   nodeType: NodeType;                // e.g. "processor"
   outputType: OutputType;      // one of the four
+  toolType: ToolType | null;          // specific tool within the node type
   inputs: Record<string, any>; // data coming in from edges
   outputs: Record<string, any>; // generated results
 }
