@@ -187,7 +187,7 @@ export function handleAddNode(
   position: { x: number; y: number },
   type: string = 'flowNode',
   data: Record<string, any> = {
-      name: 'New Node',
+      label: 'New Node',
       nodeType: NODE_TYPES.blank,
       outputType: OUTPUT_TYPES.json,
       inputs: {},

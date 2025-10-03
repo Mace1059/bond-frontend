@@ -6,6 +6,8 @@ export const OUTPUT_TYPES = {
   pdf: 'pdf',
   image: 'image',
   dataframe: 'dataframe',
+  video: 'video',
+  audio: 'audio',  
 } as const;
 
 export type OutputType = typeof OUTPUT_TYPES[keyof typeof OUTPUT_TYPES];
@@ -32,7 +34,7 @@ export type NodeType = typeof NODE_TYPES[keyof typeof NODE_TYPES];
 
 
 export interface FlowNodeData extends Record<string, unknown> {
-  name: string;                 // e.g. "Processing Node"
+  label: string;                 // e.g. "Processing Node"
   nodeType: NodeType;                // e.g. "processor"
   outputType: OutputType;      // one of the four
   inputs: Record<string, any>; // data coming in from edges

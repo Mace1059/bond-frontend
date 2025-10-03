@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import type { RootState, AppDispatch } from '../../../store/store';
 import { handleAddNode, useViewportResize } from './boardHandlers';
-
+import { RefreshCcw, CloudCheck } from 'lucide-react';
 
 import {
   snapGrid,
@@ -62,11 +62,11 @@ export default function Board({ userEmail, focusedNodeId, onDefocus }: BoardProp
   }, [nodes, edges, paramFlowId, userEmail]);
 
   // Auto-fit when flow changes
-  useEffect(() => {
-    if (paramFlowId) {
-      fitView({ padding: 0.4, maxZoom: 0.8 });
-    }
-  }, [paramFlowId, fitView]);
+  // useEffect(() => {
+  //   if (paramFlowId) {
+  //     fitView({ padding: 0.4, maxZoom: 0.8 });
+  //   }
+  // }, [paramFlowId, fitView]);
 
   // Recenter on focused node when viewport changes
   useViewportResize(focusedNodeId, !focusedNodeId);
@@ -86,34 +86,39 @@ export default function Board({ userEmail, focusedNodeId, onDefocus }: BoardProp
 
   return (
     <div ref={reactFlowWrapper} style={{ height: 'calc(100vh - 54px)' }}>
-      <div className="absolute top-right-container z-10">
+      <div className="absolute top-left-container z-10 p-4">
         {!focusedNodeId ? (
-        <><div className="saving-indicator">
-            {saving ? <>💾 saving...</> : <>✅ saved</>}
-          </div><div className="fit-view-container">
-              <button className="fit-view-button" onClick={() => fitView({ padding: 0.5, maxZoom: 0.8 })}>
-                ⬜
-              </button>
-              <button
-                onClick={handleAddNodeClick}
-                className="top-4 left-4 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded"
-              >
-                ＋ Add Node
-              </button>
-              <span className="tooltip">Go to Nodes in View</span>
-            </div></>
-      )
-      :
-      (
+        <div className="saving-indicator flex flex-row gap-2 align-center mb-2">
+            {saving ? <><RefreshCcw size={20}/>Saving...</> : <><CloudCheck size={20}/> Saved</>}
+        </div>
+        ) : (
         <button
           onClick={onDefocus}
           className="absolute top-4 left-4 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded z-10"
         >
-          Return
+          Exit
         </button>
-      )
-      }
+        )}
       </div>
+
+      <div className="absolute bottom-4 z-10 p-4">
+        {!focusedNodeId && (
+        <div className="saving-indicator flex flex-row gap-2 align-center mb-2">
+          <div className="fit-view-container">
+            <button className="fit-view-button" onClick={() => fitView({ padding: 0.5, maxZoom: 0.8 })}>
+              ⬜
+            </button>
+            <button
+              onClick={handleAddNodeClick}
+              className="top-4 left-4 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded"
+            >
+              ＋ Add Node
+            </button>
+          </div>
+        </div>
+        )}
+      </div>
+
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -134,7 +139,7 @@ export default function Board({ userEmail, focusedNodeId, onDefocus }: BoardProp
         <Background
           id="1"
           gap={25}
-          color="#ffffffff"
+          color="#a5afc9ff"
           variant={BackgroundVariant.Dots}
         />
       </ReactFlow>

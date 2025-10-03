@@ -23,6 +23,7 @@
     "react-dom": "^19.1.1",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.9.3",
+    "react-tooltip": "^5.29.1",
     "redux-undo": "^1.1.0",
     "uuid": "^13.0.0"
   },

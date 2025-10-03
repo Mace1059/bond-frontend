@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { Handle, type NodeProps, Position, useReactFlow } from '@xyflow/react';
 import type { FlowNode } from '../../../types/types';
-
-
+import { NodeTypeNodeData } from './nodeType';
+import { Info } from 'lucide-react';
 
 
 export default function FlowNodeComponent({
@@ -56,15 +56,33 @@ export default function FlowNodeComponent({
       style={{
         background: '#1e1f3b',
         border: '1px solid #444',
-        padding: 10,
         borderRadius: 5,
         cursor: 'pointer',
         textAlign: 'center',
         minWidth: 180,
+        overflow: 'hidden',
       }}
     >
-      <h3 className="text-sm font-semibold mb-1">🧩 Processing Node</h3>
-      <p className="text-xs text-gray-400 mb-2">ID: {id}</p>
+      <div className={`box-border bg-${NodeTypeNodeData[data.nodeType].bgColor} text-gray-100 font-light flex flex-row items-center justify-between px-3 py-2`}>
+        <div className="flex flex-row items-center gap-1">
+          {/* Example icon */}
+          <h4 className="text-sm m-0">{NodeTypeNodeData[data.nodeType].icon}</h4>
+          <h3 className="text-sm font-semibold mb-1">{data.label}</h3>
+        </div>
+
+        {/* Info icon (clickable) */}
+        <button
+          type="button"
+          onClick={() => console.log('Info clicked')}
+          className="cursor-pointer text-gray-300 hover:text-white transition-colors"
+        >
+          <span className="text-lg"><Info size={20}/></span>
+        </button>
+      </div>
+      <div className="p-3">
+        <p className="text-xs text-gray-400 mb-2">ID: {id}</p>
+
+      </div>
 
       <Handle
         type="target"

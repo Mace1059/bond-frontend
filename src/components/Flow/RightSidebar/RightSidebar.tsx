@@ -4,8 +4,9 @@ import { useMemo, useState } from "react";
 import { ButtonSelector } from "../../ButtonSelector/ButtonSelector";
 import { JsonFieldSelector } from "./JSON_selector";
 import { useReactFlow } from "@xyflow/react";
-import type { FlowNodeData } from "../../../types/types";
+import type { FlowNode, FlowNodeData } from "../../../types/types";
 import { useNodeInputs } from "../../../hooks/getNodeInputs";
+import { NodeTypeSelector } from "./NodeTypeSelector";
 
 type RightSidebarProps = {
   open: boolean;
@@ -74,7 +75,10 @@ export default function RightSidebar({
     document.addEventListener("mouseup", onUp);
   };
 
-
+  const selectedNode = useMemo(() => {
+    if (!nodeId) return null;
+    return reactFlow.getNode(nodeId);
+  }, [nodeId, reactFlow]);
 
   return (
     <aside
@@ -125,7 +129,10 @@ export default function RightSidebar({
         <>
           <p className="text-sm text-gray-600 mb-2">Focused node:</p>
           <p className="font-mono bg-gray-800 rounded p-2 break-all">{nodeId}</p>
-          <p className="text-sm text-gray-500 italic">No node selected</p>
+          <NodeTypeSelector
+            currentNode={selectedNode as FlowNode}
+            onSelect={(newType) => {console.log("Selected new node type:", newType);}}
+          />
         </>        
         }
         

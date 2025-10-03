@@ -18,7 +18,7 @@ export function useNodeInputs(nodeId: string | null) {
       const sourceNode = reactFlow.getNode(edge.source) as FlowNode | null;
       if (sourceNode?.data?.outputs) {
         inputs[sourceNode.id] = [
-          sourceNode.data.name ?? sourceNode.id,
+          sourceNode.data.label ?? sourceNode.id,
           sourceNode.data.outputs,
         ];
       }

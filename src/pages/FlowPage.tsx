@@ -170,8 +170,20 @@ function FlowPageContent() {
     const el = flowAreaRef.current;
     if (!el) return;
 
+    let lastWidth = el.clientWidth;
+    let lastHeight = el.clientHeight;
     let raf = 0;
+
     const ro = new ResizeObserver(() => {
+      const newWidth = el.clientWidth;
+      const newHeight = el.clientHeight;
+      if (Math.abs(newWidth - lastWidth) < 1 && Math.abs(newHeight - lastHeight) < 1) {
+        // Ignore micro-changes (e.g. from hover tooltips)
+        return;
+      }
+      lastWidth = newWidth;
+      lastHeight = newHeight;
+
       if (!focusedNodeId) return;
       if (isSidebarAnimating || isProgrammaticAnimating) return;
       if (raf) cancelAnimationFrame(raf);
@@ -188,8 +200,8 @@ function FlowPageContent() {
           nodeWidth: w,
           nodeHeight: h,
           reactFlow,
-          withAnimation: false, // instant during live resize/drag
-          viewportOverride: { width: el.clientWidth, height: el.clientHeight },
+          withAnimation: false,
+          viewportOverride: { width: newWidth, height: newHeight },
         });
       });
     });
