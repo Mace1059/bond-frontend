@@ -1,5 +1,6 @@
 import { type ReactFlowInstance } from '@xyflow/react';
 
+// viewUtils.ts
 interface ZoomToNodeOptions {
   nodeX: number;
   nodeY: number;
@@ -7,12 +8,10 @@ interface ZoomToNodeOptions {
   nodeHeight: number;
   reactFlow: ReactFlowInstance;
   withAnimation?: boolean;
+  viewportOverride?: { width: number; height: number };
+  durationMs?: number; // 👈 NEW
 }
 
-/**
- * Smoothly zooms and centers the viewport on a node.
- * Accounts for viewport size and applies a horizontal offset for right modals.
- */
 export function zoomToNode({
   nodeX,
   nodeY,
@@ -20,22 +19,23 @@ export function zoomToNode({
   nodeHeight,
   reactFlow,
   withAnimation = true,
+  viewportOverride,
+  durationMs = 500, // 👈 default duration
 }: ZoomToNodeOptions) {
-  const viewportWidth = window.innerWidth;
-  const viewportHeight = window.innerHeight;
+  const containerEl: HTMLElement | undefined = (reactFlow as any).container || undefined;
+  const viewportWidth = viewportOverride?.width ?? containerEl?.clientWidth ?? window.innerWidth;
+  const viewportHeight = viewportOverride?.height ?? containerEl?.clientHeight ?? window.innerHeight;
 
   const zoomMargin = 1.5;
   const zoomX = viewportWidth / (nodeWidth * zoomMargin);
   const zoomY = viewportHeight / (nodeHeight * zoomMargin);
-  const zoom = Math.min(zoomX, zoomY) / 2; // same as your dblclick
+  const zoom = Math.min(zoomX, zoomY) / 2;
 
   const nodeCenterX = nodeX + nodeWidth / 2;
   const nodeCenterY = nodeY + nodeHeight / 2;
-  // const horizontalOffset = (viewportWidth) * 0.25;
-  const horizontalOffset = 0;
 
-  reactFlow.setCenter(nodeCenterX + horizontalOffset, nodeCenterY, {
+  reactFlow.setCenter(nodeCenterX, nodeCenterY, {
     zoom,
-    duration: withAnimation ? 500 : 0,
+    duration: withAnimation ? durationMs : 0, // 👈 use your value
   });
 }

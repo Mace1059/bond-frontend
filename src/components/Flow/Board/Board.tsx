@@ -4,7 +4,7 @@ import { ReactFlow, ConnectionLineType, useReactFlow, Background, BackgroundVari
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import type { RootState, AppDispatch } from '../../../store/store';
-import { handleAddNode, useViewportResize } from './boardHandlers';
+import { handleAddNode, useFlowContainerResize, useViewportResize } from './boardHandlers';
 
 
 import {
@@ -45,7 +45,8 @@ export default function Board({ userEmail, focusedNodeId, onDefocus }: BoardProp
   // Select nodes/edges from Redux
   const nodes = useSelector((state: RootState) => Object.values(state.nodes.byId));
   const edges = useSelector((state: RootState) => Object.values(state.edges.byId));
-
+  const getNodes = useCallback(() => nodes, [nodes]);
+  const getEdges = useCallback(() => edges, [edges]);
 
 
   // Debounced save
@@ -68,8 +69,8 @@ export default function Board({ userEmail, focusedNodeId, onDefocus }: BoardProp
   }, [paramFlowId, fitView]);
 
   // Recenter on focused node when viewport changes
-  useViewportResize(focusedNodeId);
-
+  useViewportResize(focusedNodeId, !focusedNodeId);
+  // useFlowContainerResize(focusedNodeId); 
 
   const handleAddNodeClick = (e: React.MouseEvent) => {
     const bounds = reactFlowWrapper.current?.getBoundingClientRect();
@@ -119,8 +120,8 @@ export default function Board({ userEmail, focusedNodeId, onDefocus }: BoardProp
         nodes={nodes}
         edges={edges}
         nodeTypes={flowNodeTypes}
-        onNodesChange={createOnNodesChange(dispatch, nodes, debouncedSave)}
-        onEdgesChange={createOnEdgesChange(dispatch, edges, debouncedSave)}
+        onNodesChange={createOnNodesChange(dispatch, getNodes, debouncedSave)}
+        onEdgesChange={createOnEdgesChange(dispatch, getEdges, debouncedSave)}
         onConnect={createOnConnect(dispatch, debouncedSave)}
         onConnectEnd={createOnConnectEnd(dispatch, debouncedSave, screenToFlowPosition)}
         onNodeDrag={onNodeDrag}
