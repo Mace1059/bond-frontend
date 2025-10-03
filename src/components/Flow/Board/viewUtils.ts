@@ -26,7 +26,7 @@ export function zoomToNode({
   const viewportWidth = viewportOverride?.width ?? containerEl?.clientWidth ?? window.innerWidth;
   const viewportHeight = viewportOverride?.height ?? containerEl?.clientHeight ?? window.innerHeight;
 
-  const zoomMargin = 1.5;
+  const zoomMargin = 1;
   const zoomX = viewportWidth / (nodeWidth * zoomMargin);
   const zoomY = viewportHeight / (nodeHeight * zoomMargin);
   const zoom = Math.min(zoomX, zoomY) / 2;

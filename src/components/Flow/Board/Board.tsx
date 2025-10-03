@@ -4,7 +4,7 @@ import { ReactFlow, ConnectionLineType, useReactFlow, Background, BackgroundVari
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import type { RootState, AppDispatch } from '../../../store/store';
-import { handleAddNode, useFlowContainerResize, useViewportResize } from './boardHandlers';
+import { handleAddNode, useViewportResize } from './boardHandlers';
 
 
 import {
@@ -85,26 +85,23 @@ export default function Board({ userEmail, focusedNodeId, onDefocus }: BoardProp
   };
 
   return (
-    <div ref={reactFlowWrapper} className="border border-solid border-gray-400" style={{ height: 'calc(100vh - 54px)' }}>
-    {/* <div ref={reactFlowWrapper} className="border border-solid border-gray-400" style={{ width: 'calc(100vw - 60px)', height: 'calc(100vh - 54px)' }}> */}
-      {!focusedNodeId ? (
+    <div ref={reactFlowWrapper} style={{ height: 'calc(100vh - 54px)' }}>
       <div className="absolute top-right-container z-10">
-        <div className="saving-indicator">
-          {saving ? <>💾 saving...</> : <>✅ saved</>}
-        </div>
-        <div className="fit-view-container">
-          <button className="fit-view-button" onClick={() => fitView({ padding: 0.5, maxZoom: 0.8 })}>
-            ⬜
-          </button>
-          <button
-            onClick={handleAddNodeClick}
-            className="top-4 left-4 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded"
-          >
-            ＋ Add Node
-          </button>
-          <span className="tooltip">Go to Nodes in View</span>
-        </div>
-      </div>
+        {!focusedNodeId ? (
+        <><div className="saving-indicator">
+            {saving ? <>💾 saving...</> : <>✅ saved</>}
+          </div><div className="fit-view-container">
+              <button className="fit-view-button" onClick={() => fitView({ padding: 0.5, maxZoom: 0.8 })}>
+                ⬜
+              </button>
+              <button
+                onClick={handleAddNodeClick}
+                className="top-4 left-4 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded"
+              >
+                ＋ Add Node
+              </button>
+              <span className="tooltip">Go to Nodes in View</span>
+            </div></>
       )
       :
       (
@@ -116,6 +113,7 @@ export default function Board({ userEmail, focusedNodeId, onDefocus }: BoardProp
         </button>
       )
       }
+      </div>
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -136,7 +134,7 @@ export default function Board({ userEmail, focusedNodeId, onDefocus }: BoardProp
         <Background
           id="1"
           gap={25}
-          color="#41454dff"
+          color="#ffffffff"
           variant={BackgroundVariant.Dots}
         />
       </ReactFlow>

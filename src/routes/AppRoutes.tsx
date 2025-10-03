@@ -31,6 +31,10 @@ export default function AppRoutes() {
         {
           path: '',
           element: <FlowPage/>,
+        },
+        {
+          path: 'yay',
+          element: <DashboardPage/>,
         }
       ],
     },

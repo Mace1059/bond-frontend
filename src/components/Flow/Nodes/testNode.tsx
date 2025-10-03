@@ -21,16 +21,6 @@ export default function NumberNodeComponent({
     // Save previous viewport to return to
     const viewport = reactFlow.getViewport();
 
-
-    // zoomToNode({
-    //   nodeX: positionAbsoluteX,
-    //   nodeY: positionAbsoluteY,
-    //   nodeWidth: el.offsetWidth,
-    //   nodeHeight: el.offsetHeight,
-    //   reactFlow,
-    //   withAnimation: true,
-    // });
-
     window.dispatchEvent(
       new CustomEvent('node-focus', { detail: { id, viewport } })
     );
@@ -41,7 +31,7 @@ export default function NumberNodeComponent({
       ref={nodeRef}
       onDoubleClick={handleDoubleClick}
       style={{
-        background: '#301818ff',
+        background: '#2b2c4aff',
         border: '1px solid #ddd',
         padding: 10,
         borderRadius: 5,

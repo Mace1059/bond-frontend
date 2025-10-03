@@ -21,7 +21,7 @@ export default function PageTemplate() {
         <Navbar />
         <main className="flex-1 min-w-0 overflow-hidden h-[calc(100vh-3.5rem)]">
           {isBoardPage ? (
-            <div className="w-screen h-[calc(100vh-3.5rem)]">
+            <div className="w-full h-[calc(100vh-3.5rem)]">
               <Outlet />
             </div>
           ) : (

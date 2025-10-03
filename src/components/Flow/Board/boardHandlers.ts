@@ -9,6 +9,7 @@ import { useEffect } from 'react';
 import { useReactFlow } from '@xyflow/react';
 
 import { zoomToNode } from './viewUtils';
+import { NODE_TYPES, OUTPUT_TYPES } from '../../../types/types';
 
 //===========================
 // Viewport Resize Handler
@@ -74,7 +75,7 @@ export function useViewportResize(
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [focusedNodeId, reactFlow, enabled]); // 👈 include enabled
+  }, [focusedNodeId, reactFlow, enabled]);
 }
 
 export function useFlowContainerResize(focusedNodeId: string | null) {
@@ -184,15 +185,20 @@ export function createOnConnectEnd(
 export function handleAddNode(
   dispatch: AppDispatch,
   position: { x: number; y: number },
-  type: string = 'blank',
-  data: Record<string, any> = { text: 'New Node' }
+  type: string = 'flowNode',
+  data: Record<string, any> = {
+      name: 'New Node',
+      nodeType: NODE_TYPES.blank,
+      outputType: OUTPUT_TYPES.json,
+      inputs: {},
+      outputs: {test: 'data'},
+    },
 ) {
   const newNode: Node = {
     id: getId(),
-    type,
-    position,
-    data,
-    origin: [0, 0],
+    type: type,
+    position: position,
+    data: data
   };
 
   // ✅ Add node cleanly

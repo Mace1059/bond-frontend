@@ -8,12 +8,14 @@ import {
 } from '@xyflow/react';
 import { v4 as uuidv4 } from 'uuid';
 import testNode from '../Nodes/testNode';
- 
+import flowNode from '../Nodes/flowNode';
+
 //===========================
 // Node Types
 //===========================
 export const flowNodeTypes: NodeTypes = {
   blank: testNode,
+  flowNode: flowNode,
 };
 
 
@@ -37,12 +39,12 @@ export const defaultEdgeOptions: DefaultEdgeOptions = {
     width: 20,
     height: 20,
     type: MarkerType.ArrowClosed,
-    color: "black",
+    color: "white",
   },
 
   style: {
     strokeWidth: 1,
-    stroke: "black",
+    stroke: "white",
   },
 };
 

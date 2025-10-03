@@ -243,7 +243,7 @@ function FlowPageContent() {
       {/* FLOW AREA */}
       <div
         ref={flowAreaRef}
-        className="h-full"
+        className="h-full min-w-0 box-border"
         style={{
           width: leftWidth,
           transition: isSidebarResizing ? "none" : "width 200ms ease-in-out",
