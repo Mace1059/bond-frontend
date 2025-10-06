@@ -10,7 +10,6 @@ import { useReactFlow } from '@xyflow/react';
 
 import { zoomToNode } from './viewUtils';
 import { NODE_TYPES, OUTPUT_TYPES } from '../../../types/types';
-import { TOOL_TYPE } from '../../../types/toolType';
 
 //===========================
 // Viewport Resize Handler
@@ -158,7 +157,7 @@ export function createOnConnect(dispatch: AppDispatch, debouncedSave: () => void
       id: getId(),
       source: connection.source!,
       target: connection.target!,
-      sourceHandle: connection.sourceHandle ?? undefined, 
+      sourceHandle: connection.sourceHandle ?? undefined,
       targetHandle: connection.targetHandle ?? undefined,
     };
 

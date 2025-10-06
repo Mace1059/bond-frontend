@@ -3,7 +3,6 @@ import { NodeTypeNodeData } from "../../../types/nodeType";
 import { ToolTypeData, type ToolType } from "../../../types/toolType";
 import type { FlowNode, NodeType, OutputType } from "../../../types/types";
 import { useReactFlow } from "@xyflow/react";
-import { useDispatch } from "react-redux";
 import { useUpdateNodeData } from "../../../hooks/useUpdateNodeData";
 
 interface NodeTypeSelectorProps {
@@ -11,7 +10,6 @@ interface NodeTypeSelectorProps {
 }
 
 export const NodeTypeSelector: React.FC<NodeTypeSelectorProps> = ({ currentNode }) => {
-  const dispatch = useDispatch();
   const rf = useReactFlow();
   const updateNodeData = useUpdateNodeData();
 
@@ -51,15 +49,16 @@ export const NodeTypeSelector: React.FC<NodeTypeSelectorProps> = ({ currentNode 
     const disabled = invalidInputs.length > 0 || invalidOutputs.length > 0;
     const tooltip = disabled
       ? `Incompatible: ${[
-          ...invalidInputs.map((t) => `input:${t}`),
-          ...invalidOutputs.map((t) => `output:${t}`),
-        ].join(", ")}`
+        ...invalidInputs.map((t) => `input:${t}`),
+        ...invalidOutputs.map((t) => `output:${t}`),
+      ].join(", ")}`
       : "";
     return { disabled, tooltip, meta };
   };
 
+
   const handleNodeTypeSelect = (newType: NodeType) => {
-    setSelectedNodeType(newType); // 👉 go to Step 2
+    setSelectedNodeType(newType);
   };
 
   const renderNodeTypeSelection = () => (
@@ -68,17 +67,16 @@ export const NodeTypeSelector: React.FC<NodeTypeSelectorProps> = ({ currentNode 
       <div className="grid grid-cols-1 overflow-y-auto pr-1">
         {Object.entries(NodeTypeNodeData).map(([typeKey, typeMeta]) => {
           const nodeType = typeKey as NodeType;
-          const { disabled, tooltip, meta } = checkCandidate(nodeType);
+          const { disabled, tooltip } = checkCandidate(nodeType);
 
           return (
             <button
               key={nodeType}
               onClick={() => !disabled && handleNodeTypeSelect(nodeType)}
               className={`flex flex-row items-center gap-4 px-2 py-1 border h-15 text-sm transition 
-                ${
-                  disabled
-                    ? "border-gray-700 text-gray-500 cursor-not-allowed"
-                    : "hover:bg-gray-600 border-gray-600 text-gray-100"
+                ${disabled
+                  ? "border-gray-700 text-gray-500 cursor-not-allowed"
+                  : "hover:bg-gray-600 border-gray-600 text-gray-100"
                 }`}
               title={tooltip}
               disabled={disabled}
@@ -102,15 +100,33 @@ export const NodeTypeSelector: React.FC<NodeTypeSelectorProps> = ({ currentNode 
   // ========================
   // STEP 2: Pick Tool
   // ========================
+  const checkToolCandidate = (toolKey: ToolType) => {
+    if (!selectedNodeType) return { disabled: true, tooltip: "No node type selected" };
+
+    const toolMeta = ToolTypeData[selectedNodeType]?.[toolKey];
+    if (!toolMeta) return { disabled: true, tooltip: "Tool not found" };
+
+    // Check if all inputTypes are compatible with the tool's accepted inTypes
+    const invalidInputs = inputTypes.filter((t) => !toolMeta.inTypes.includes(t));
+    const disabled = invalidInputs.length > 0;
+    const tooltip = disabled
+      ? `Incompatible inputs: ${invalidInputs.join(", ")}`
+      : "";
+
+    return { disabled, tooltip };
+  };
+
   const handleToolSelect = (toolKey: ToolType) => {
     if (!selectedNodeType || !currentNode) return;
 
     const freshNode = rf.getNode(currentNode.id) as FlowNode | undefined;
     if (!freshNode) return;
 
+    const toolMeta = ToolTypeData[selectedNodeType]?.[toolKey];
     updateNodeData(currentNode.id, {
-      nodeType: selectedNodeType, 
+      nodeType: selectedNodeType,
       toolType: toolKey,
+      outputType: toolMeta && toolMeta.outTypes[0],
     });
 
     setSelectedNodeType(null); // reset view
@@ -135,19 +151,33 @@ export const NodeTypeSelector: React.FC<NodeTypeSelectorProps> = ({ currentNode 
           </button>
         </div>
         <div className="flex flex-col gap-2 overflow-y-auto pr-1">
-          {Object.entries(tools).map(([toolKey, toolMeta]) => (
-            <button
-              key={toolKey}
-              onClick={() => handleToolSelect(toolKey as ToolType)}
-              className="flex flex-col items-start text-left p-2 border border-gray-600 hover:bg-gray-700 rounded-md transition"
-            >
-              <div className="flex items-center gap-2 mb-1">
-                <div className="p-1 bg-gray-800 rounded-md"><toolMeta.icon size={18} className="text-gray-200" /></div>
-                <span className="text-sm font-medium text-gray-100">{toolKey}</span>
-              </div>
-              <p className="text-xs text-gray-400">{toolMeta.description}</p>
-            </button>
-          ))}
+          {Object.entries(tools).map(([toolKey, toolMeta]) => {
+            const { disabled, tooltip } = checkToolCandidate(toolKey as ToolType);
+
+            return (
+              <button
+                key={toolKey}
+                onClick={() => !disabled && handleToolSelect(toolKey as ToolType)}
+                className={`flex flex-col items-start text-left p-2 border rounded-md transition ${disabled
+                    ? "border-gray-700 text-gray-500 cursor-not-allowed bg-gray-800/50"
+                    : "border-gray-600 hover:bg-gray-700 text-gray-100"
+                  }`}
+                title={tooltip}
+                disabled={disabled}
+              >
+                <div className="flex items-center gap-2 mb-1">
+                  <div className={`p-1 rounded-md ${disabled ? "bg-gray-700" : "bg-gray-800"}`}>
+                    <toolMeta.icon size={18} className={`${disabled ? "text-gray-500" : "text-gray-200"}`} />
+                  </div>
+                  <span className="text-sm font-medium truncate">{toolKey}</span>
+                </div>
+                <p className={`text-xs ${disabled ? "text-gray-500" : "text-gray-400"}`}>
+                  {toolMeta.description}
+                </p>
+              </button>
+            );
+          })}
+
         </div>
       </div>
     );

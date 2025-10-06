@@ -77,7 +77,7 @@ export const TOOL_TYPE = {
   image_resize: 'image_resize',
   image_compress: 'image_compress',
   image_convert: 'image_convert',
-  image_generate: 'image_generate',  
+  image_generate: 'image_generate',
   // video: 'video',
   video_trim: 'video_trim',
   video_compress: 'video_compress',
@@ -85,7 +85,7 @@ export const TOOL_TYPE = {
   // audio: 'audio',
   audio_trim: 'audio_trim',
   audio_compress: 'audio_compress',
-  audio_convert: 'audio_convert', 
+  audio_convert: 'audio_convert',
   // email: 'email',
   email_read: 'email_read',
   email_write: 'email_write',
@@ -277,8 +277,8 @@ export const ToolTypeData: Record<NodeType, Partial<Record<ToolType, ToolTypeMet
   },
 
   [NODE_TYPES.email]: {
-    email_read: { nodeType: NODE_TYPES.email, description: "Read emails", icon: Mail, inTypes: [OUTPUT_TYPES.json], outTypes: [OUTPUT_TYPES.json] },
-    email_write: { nodeType: NODE_TYPES.email, description: "Send emails", icon: Mail, inTypes: [OUTPUT_TYPES.json], outTypes: [OUTPUT_TYPES.json] },
+    email_read: { nodeType: NODE_TYPES.email, description: "Read emails", icon: Mail, inTypes: [OUTPUT_TYPES.json], outTypes: [] },
+    email_write: { nodeType: NODE_TYPES.email, description: "Send emails", icon: Mail, inTypes: [OUTPUT_TYPES.json], outTypes: [] },
   },
 
   [NODE_TYPES.slack]: {

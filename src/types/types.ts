@@ -8,7 +8,7 @@ export const OUTPUT_TYPES = {
   image: 'image',
   dataframe: 'dataframe',
   video: 'video',
-  audio: 'audio',  
+  audio: 'audio',
 } as const;
 
 export type OutputType = typeof OUTPUT_TYPES[keyof typeof OUTPUT_TYPES];
