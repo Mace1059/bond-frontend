@@ -6,7 +6,7 @@ import { JsonFieldSelector } from "./JSON_selector";
 import { useReactFlow } from "@xyflow/react";
 import type { FlowNode, FlowNodeData } from "../../../types/types";
 import { useNodeInputs } from "../../../hooks/getNodeInputs";
-import NodeDetail from "./NodeDetail";
+import NodeDetail from "../../ToolMenus/NodeDetail";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../../store/store";
 
@@ -35,12 +35,13 @@ export default function RightSidebar({
 
   // Node input/output display logic
   const reactFlow = useReactFlow();
-  const nodeData = useMemo(() => {
-    if (!nodeId) return null;
-    const node = reactFlow.getNode(nodeId);
-    return node?.data as FlowNodeData | null;
-  }, [nodeId, reactFlow]);
-  const outputsJson = nodeData?.outputs ?? {};
+
+  const selectedNode = useSelector((state: RootState) =>
+    nodeId ? state.nodes.byId[nodeId] : null
+  );
+  const outputsJson = selectedNode?.data?.outputs ?? {};
+
+  // const outputsJson = nodeData?.outputs ?? {};
   const inputs = useNodeInputs(nodeId);
 
   // Resize logic
@@ -77,10 +78,6 @@ export default function RightSidebar({
     document.addEventListener("mouseup", onUp);
   };
 
-  const selectedNode = useSelector((state: RootState) =>
-    nodeId ? state.nodes.byId[nodeId] : null
-  );
-  
   return (
     <aside
       onTransitionEnd={onTransitionEnd}
@@ -93,7 +90,7 @@ export default function RightSidebar({
       {open && (
         <div
           onMouseDown={startResizing}
-          className="absolute top-0 left-[-1px] h-full w-3 cursor-ew-resize z-20 hover:bg-blue-400/20"/>
+          className="absolute top-0 left-[-1px] h-full w-3 cursor-ew-resize z-20 hover:bg-blue-400/20" />
       )}
 
       <div className={`flex items-center justify-between h-11 px-4 border-b border-gray-800 ${open ? "opacity-100" : "opacity-0"} transition-opacity duration-200`}>
@@ -102,9 +99,9 @@ export default function RightSidebar({
           color="green"
           value={selected}
           onChange={setSelected}
-          size="md"
+          size="sm"
         />
-          
+
         <button onClick={onClose} className="p-2 rounded hover:bg-gray-100" aria-label="Close sidebar">
           <X size={18} />
         </button>
@@ -114,31 +111,31 @@ export default function RightSidebar({
 
 
         {selected === "Inputs" &&
-        Object.entries(inputs).map(([nodeId, [name, data]]) => (
-          <div key={nodeId} className="mb-4">
-            <h3 className="font-semibold text-sm mb-2 pl-4">
-              From {name}
-            </h3>
-            <JsonFieldSelector
-              data={data as Record<string, any>}
-              onChange={(filtered) => {console.log(`Selected JSON changed for ${data}:`, filtered)}}
-            />
-          </div>
-        ))}
+          Object.entries(inputs).map(([nodeId, [name, data]]) => (
+            <div key={nodeId} className="mb-4">
+              <h3 className="font-semibold text-sm mb-2 pl-4">
+                From {name}
+              </h3>
+              <JsonFieldSelector
+                data={data as Record<string, any>}
+                onChange={(filtered) => { console.log(`Selected JSON changed for ${data}:`, filtered) }}
+              />
+            </div>
+          ))}
 
         {selected === "Node Details" &&
-           <NodeDetail selectedNode={selectedNode as FlowNode | null} />
+          <NodeDetail selectedNode={selectedNode as FlowNode | null} />
         }
-        
+
         {selected === "Outputs" &&
-        <JsonFieldSelector
-          data={outputsJson}
-          onChange={(filtered) => {
-            console.log("Selected JSON changed:", filtered);
-          }}
-        />
+          <JsonFieldSelector
+            data={outputsJson}
+            onChange={(filtered) => {
+              console.log("Selected JSON changed:", filtered);
+            }}
+          />
         }
-        
+
 
       </div>
     </aside>

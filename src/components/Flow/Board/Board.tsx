@@ -87,18 +87,11 @@ export default function Board({ userEmail, focusedNodeId, onDefocus }: BoardProp
   return (
     <div ref={reactFlowWrapper} style={{ height: 'calc(100vh - 54px)' }}>
       <div className="absolute top-left-container z-10 p-4">
-        {!focusedNodeId ? (
+        {!focusedNodeId &&
           <div className="saving-indicator flex flex-row gap-2 align-center mb-2">
             {saving ? <><RefreshCcw size={20} />Saving...</> : <><CloudCheck size={20} /> Saved</>}
           </div>
-        ) : (
-          <button
-            onClick={onDefocus}
-            className="absolute top-4 left-4 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded z-10"
-          >
-            Exit
-          </button>
-        )}
+        }
       </div>
 
       <div className="absolute bottom-4 z-10 p-4">

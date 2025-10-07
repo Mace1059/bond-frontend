@@ -13,7 +13,7 @@ export default function Sidebar({ open, onToggle }: SidebarProps) {
                   transition-[width] duration-300 ease-in-out
                   ${open ? "w-64" : "fit-content"}`}
     >
-      <div className="flex items-center justify-between h-14 px-3 border-b border-gray-800">
+      <div className="flex items-center justify-between h-12 px-3 border-b border-gray-800">
         {open && <span className="text-lg font-semibold">Bond</span>}
         <button onClick={onToggle} className="p-2 rounded hover:bg-gray-800" aria-label={open ? "Collapse sidebar" : "Expand sidebar"}>
           <Menu size={18} />

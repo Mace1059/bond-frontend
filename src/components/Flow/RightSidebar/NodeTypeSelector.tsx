@@ -159,8 +159,8 @@ export const NodeTypeSelector: React.FC<NodeTypeSelectorProps> = ({ currentNode 
                 key={toolKey}
                 onClick={() => !disabled && handleToolSelect(toolKey as ToolType)}
                 className={`flex flex-col items-start text-left p-2 border rounded-md transition ${disabled
-                    ? "border-gray-700 text-gray-500 cursor-not-allowed bg-gray-800/50"
-                    : "border-gray-600 hover:bg-gray-700 text-gray-100"
+                  ? "border-gray-700 text-gray-500 cursor-not-allowed bg-gray-800/50"
+                  : "border-gray-600 hover:bg-gray-700 text-gray-100"
                   }`}
                 title={tooltip}
                 disabled={disabled}

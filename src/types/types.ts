@@ -41,6 +41,7 @@ export interface FlowNodeData extends Record<string, unknown> {
   toolType: ToolType | null;          // specific tool within the node type
   inputs: Record<string, any>; // data coming in from edges
   outputs: Record<string, any>; // generated results
+  toolConfig?: Record<string, any>; // configuration specific to the tool
 }
 
 export type FlowNode = Node<FlowNodeData, 'flowNode'>;
