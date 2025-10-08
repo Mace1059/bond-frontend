@@ -19,16 +19,16 @@ export default function PageTemplate() {
       {/* Main area */}
       <div className="flex flex-col flex-1 min-w-0 h-screen">
         <Navbar />
-        <main className="flex-1 min-w-0 overflow-hidden h-[calc(100vh-3.5rem)]">
+        <main className="flex-1 min-w-0 overflow-hidden h-[calc(100vh-3rem)]">
           {isBoardPage ? (
-            <div className="w-full h-[calc(100vh-3.5rem)]">
+            <div className="w-full h-[calc(100vh-3rem)]">
               <Outlet />
             </div>
           ) : (
             <div className="max-w-6xl mx-auto px-6 py-6">
               <Outlet />
             </div>
-          )}  
+          )}
         </main>
       </div>
     </div>

@@ -5,6 +5,7 @@ import { NodeTypeNodeData } from "../../types/nodeType";
 import { NodeTypeSelector } from "../Flow/RightSidebar/NodeTypeSelector";
 import { TOOL_TYPE } from "../../types/toolType";
 import RSSFetch from "./ToolRSS/RSSFetch";
+import CodeEditor from "../CodeEditor/CodeEditor";
 
 interface NodeDetailProps {
   selectedNode: FlowNode | null;
@@ -80,7 +81,7 @@ const NodeDetail: React.FC<NodeDetailProps> = ({ selectedNode }) => {
       case TOOL_TYPE.code_php:
       case TOOL_TYPE.code_typescript:
       case TOOL_TYPE.code_swift:
-        return <div />;
+        return <CodeEditor />;
 
       // 🧭 Logic
       case TOOL_TYPE.logic_if:

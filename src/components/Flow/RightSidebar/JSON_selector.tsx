@@ -34,7 +34,6 @@ export const JsonFieldSelector: React.FC<JsonFieldSelectorProps> = ({
     for (const key of selectedKeys) {
       filtered[key] = data[key];
     }
-    console.log("📝 Filtered JSON:", filtered);
     alert(JSON.stringify(filtered, null, 2));
   };
 

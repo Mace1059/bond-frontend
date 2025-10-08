@@ -107,7 +107,7 @@ export default function RightSidebar({
         </button>
       </div>
 
-      <div className={`flex-1 overflow-y-auto p-4 ${open ? "opacity-100" : "opacity-0"} transition-opacity duration-200 delay-75`}>
+      <div className={`flex-1 overflow-y-auto ${open ? "opacity-100" : "opacity-0"} transition-opacity duration-200 delay-75`}>
 
 
         {selected === "Inputs" &&

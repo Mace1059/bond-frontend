@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import type { RootState, AppDispatch } from '../../../store/store';
 import { handleAddNode, useViewportResize } from './boardHandlers';
-import { RefreshCcw, CloudCheck } from 'lucide-react';
+import { RefreshCcw, CloudCheck, Focus, ZoomIn, ZoomOut, Zap } from 'lucide-react';
 
 import {
   snapGrid,
@@ -36,6 +36,7 @@ export default function Board({ userEmail, focusedNodeId, onDefocus }: BoardProp
   const dispatch = useDispatch<AppDispatch>();
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
   const { screenToFlowPosition, fitView } = useReactFlow();
+  const { zoomIn, zoomOut } = useReactFlow();
 
   const { flow_id: paramFlowId } = useParams<{ flow_id?: string }>();
   // Save state
@@ -60,13 +61,6 @@ export default function Board({ userEmail, focusedNodeId, onDefocus }: BoardProp
       setSaving(false);
     }, 800); // 0.8s debounce
   }, [nodes, edges, paramFlowId, userEmail]);
-
-  // Auto-fit when flow changes
-  // useEffect(() => {
-  //   if (paramFlowId) {
-  //     fitView({ padding: 0.4, maxZoom: 0.8 });
-  //   }
-  // }, [paramFlowId, fitView]);
 
   // Recenter on focused node when viewport changes
   useViewportResize(focusedNodeId, !focusedNodeId);
@@ -96,21 +90,48 @@ export default function Board({ userEmail, focusedNodeId, onDefocus }: BoardProp
 
       <div className="absolute bottom-4 z-10 p-4">
         {!focusedNodeId && (
-          <div className="saving-indicator flex flex-row gap-2 align-center mb-2">
-            <div className="fit-view-container">
-              <button className="fit-view-button" onClick={() => fitView({ padding: 0.5, maxZoom: 0.8 })}>
-                ⬜
-              </button>
-              <button
-                onClick={handleAddNodeClick}
-                className="top-4 left-4 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded"
+          <div className="flex flex-col gap-2 align-center mb-2">
+            <div className='flex flex-row'>
+              <button className="w-10 h-10 rounded-md flex items-center justify-center transition-colors hover:bg-gray-800/80 overflow-hidden gap-0"
+                onClick={() => fitView({ padding: 0.5, maxZoom: 1.5 })}
               >
-                ＋ Add Node
+                <Focus size={20} />
+              </button>
+              <button className="w-10 h-10 rounded-md flex items-center justify-center transition-colors hover:bg-gray-800/80 overflow-hidden gap-0"
+                onClick={() => zoomIn({ duration: 200 })}
+              >
+                <ZoomIn size={20} />
+              </button>
+              <button className="w-10 h-10 rounded-md flex items-center justify-center transition-colors hover:bg-gray-800/80 overflow-hidden gap-0"
+                onClick={() => zoomOut({ duration: 200 })}
+              >
+                <ZoomOut size={20} />
               </button>
             </div>
+            <button
+              onClick={handleAddNodeClick}
+              className="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded"
+            >
+              Add Node
+            </button>
           </div>
         )}
       </div>
+
+      {/* <div className="absolute bottom-4 right-4 z-10 p-4">
+        {!focusedNodeId && (
+          <div className="flex flex-col gap-2 align-center mb-2">
+            <button
+              onClick={handleAddNodeClick}
+              className="flex items-center justify-center bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded"
+            >
+              <Zap size={20} />
+              Execute Workflow
+            </button>
+          </div>
+        )}
+      </div> */}
+
 
       <ReactFlow
         nodes={nodes}
